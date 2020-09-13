@@ -1,7 +1,7 @@
 class Day < ApplicationRecord
   belongs_to :user
 
-  validates :date, presence: true
+  validates :date, presence: true, uniqueness: { scope: :user }
 
   def self.today(user)
     today = find_by(date: Date.today, user: user)

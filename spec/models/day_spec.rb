@@ -16,6 +16,24 @@ RSpec.describe Day, type: :model do
       expect(day).not_to be_valid
       expect(day.errors[:date]).to include("can't be blank")
     end
+
+    it 'must have only one date per user' do
+      user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
+      Day.create!(user: user, date: Date.today)
+      day = Day.new(user: user, date: Date.today)
+
+      expect(day).not_to be_valid
+      expect(day.errors[:date]).to include('has already been taken')
+    end
+
+    it 'the same date is valid for different users' do
+      user1 = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
+      user2 = User.create!(name: 'User2', email: 'user2@mail.com', password: '123123')
+      Day.create!(user: user1, date: Date.today)
+      day = Day.new(user: user2, date: Date.today)
+
+      expect(day).to be_valid
+    end
   end
 
   it 'has default 0 for reviewed and learned' do
