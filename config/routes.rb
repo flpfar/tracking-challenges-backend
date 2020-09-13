@@ -5,5 +5,6 @@ Rails.application.routes.draw do
     get 'auto_login', to: 'users#auto_login'
     get 'today', to: 'days#today'
     patch 'today', to: 'days#update_today'
+    resources :days, only: [:index]
   end
 end

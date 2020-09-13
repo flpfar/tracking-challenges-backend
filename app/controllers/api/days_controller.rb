@@ -1,6 +1,10 @@
 module Api
   class DaysController < ApplicationController
-    before_action :authorized, only: [:today, :update_today]
+    before_action :authorized, only: %i[index today update_today]
+
+    def index
+      @days = @user.days.order(date: :desc)
+    end
 
     def today
       @today = Day.today(@user)

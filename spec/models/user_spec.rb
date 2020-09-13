@@ -26,7 +26,7 @@ RSpec.describe User, type: :model do
       end
 
       it 'without an unique email' do
-        user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
+        User.create!(name: 'User', email: 'user@mail.com', password: '123123')
         new_user = User.new(name: 'New User', email: 'user@mail.com', password: '123123')
 
         new_user.valid?
