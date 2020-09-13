@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_12_125437) do
+ActiveRecord::Schema.define(version: 2020_09_13_123550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "days", force: :cascade do |t|
+    t.date "date", null: false
+    t.bigint "user_id", null: false
+    t.integer "reviewed", default: 0
+    t.integer "learned", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_days_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
@@ -23,4 +33,5 @@ ActiveRecord::Schema.define(version: 2020_09_12_125437) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "days", "users"
 end
