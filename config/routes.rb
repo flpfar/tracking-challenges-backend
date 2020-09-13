@@ -3,5 +3,7 @@ Rails.application.routes.draw do
     post 'signup', to: 'users#signup'
     post 'login', to: 'users#login'
     get 'auto_login', to: 'users#auto_login'
+    get 'today', to: 'days#today'
+    patch 'today', to: 'days#update_today'
   end
 end

@@ -1,9 +1,4 @@
 require 'rails_helper'
-require 'support/token_helper'
-
-RSpec.configure do |c|
-  c.include TokenHelper
-end
 
 RSpec.describe 'User' do
   context 'POST /signup' do
