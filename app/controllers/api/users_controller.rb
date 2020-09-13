@@ -1,21 +1,23 @@
 module Api
   class UsersController < ApplicationController
-    # def signup
-    #   @user = User.create(user_params)
-    #   if @user.valid?
-    #     token = JsonWebToken.encode({ user_id: @user.id })
-    #     render json: { user: @user, token: token }
-    #   else
-    #     errors = json.errors @user.errors.full_messages
-    #     render json: { errors: errors }, status: :unprocessable_entity
-    #   end
-    # end
     def signup
       @user = User.create(user_params)
       if @user.valid?
         @token = JsonWebToken.encode({ user_id: @user.id })
+        render 'session', locals: { user: @user, token: @token }
       else
-        render partial: 'errors', locals: {errors: @user.errors.full_messages}, status: :unprocessable_entity
+        render 'errors', locals: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+
+    def login
+      @user = User.find_by(email: params[:user][:email])
+
+      if @user&.authenticate(params[:user][:password])
+        @token = JsonWebToken.encode({ user_id: @user.id })
+        render 'session', locals: { user: @user, token: @token }
+      else
+        render 'errors', locals: { errors: ['Invalid email or password'] }, status: :unauthorized
       end
     end
 
