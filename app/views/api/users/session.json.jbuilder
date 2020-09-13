@@ -1,6 +1,3 @@
-json.user do
-  json.name user.name
-  json.email user.email
-end
+json.partial! 'user', user: user
 
 json.token token
