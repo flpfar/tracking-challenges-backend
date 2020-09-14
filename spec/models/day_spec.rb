@@ -4,7 +4,7 @@ RSpec.describe Day, type: :model do
   context 'validations' do
     it 'is valid with valid attributes' do
       user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
-      day = Day.new(user: user, date: Date.today)
+      day = Day.new(user: user, date: Date.current)
 
       expect(day).to be_valid
     end
@@ -19,8 +19,8 @@ RSpec.describe Day, type: :model do
 
     it 'must have only one date per user' do
       user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
-      Day.create!(user: user, date: Date.today)
-      day = Day.new(user: user, date: Date.today)
+      Day.create!(user: user, date: Date.current)
+      day = Day.new(user: user, date: Date.current)
 
       expect(day).not_to be_valid
       expect(day.errors[:date]).to include('has already been taken')
@@ -29,8 +29,8 @@ RSpec.describe Day, type: :model do
     it 'the same date is valid for different users' do
       user1 = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
       user2 = User.create!(name: 'User2', email: 'user2@mail.com', password: '123123')
-      Day.create!(user: user1, date: Date.today)
-      day = Day.new(user: user2, date: Date.today)
+      Day.create!(user: user1, date: Date.current)
+      day = Day.new(user: user2, date: Date.current)
 
       expect(day).to be_valid
     end
@@ -38,7 +38,7 @@ RSpec.describe Day, type: :model do
 
   it 'has default 0 for reviewed and learned' do
     user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
-    day = Day.create!(user: user, date: Date.today)
+    day = Day.create!(user: user, date: Date.current)
 
     expect(day.reviewed).to eq(0)
     expect(day.learned).to eq(0)
@@ -46,7 +46,7 @@ RSpec.describe Day, type: :model do
 
   it 'must be destroyed on user deletion' do
     user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
-    Day.create!(user: user, date: Date.today)
+    Day.create!(user: user, date: Date.current)
 
     user.destroy
 
@@ -55,11 +55,11 @@ RSpec.describe Day, type: :model do
 
   it '.today returns the current day ' do
     user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
-    Day.create!(user: user, date: Date.today, reviewed: 2, learned: 3)
+    Day.create!(user: user, date: Date.current, reviewed: 2, learned: 3)
 
     today = Day.today(user)
 
-    expect(today.date).to eq(Date.today)
+    expect(today.date).to eq(Date.current)
     expect(today.reviewed).to eq(2)
     expect(today.learned).to eq(3)
   end
@@ -69,7 +69,7 @@ RSpec.describe Day, type: :model do
 
     today = Day.today(user)
 
-    expect(today.date).to eq(Date.today)
+    expect(today.date).to eq(Date.current)
     expect(today.reviewed).to eq(0)
     expect(today.learned).to eq(0)
     expect(today.user).to eq(user)
