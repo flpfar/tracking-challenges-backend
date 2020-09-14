@@ -76,9 +76,11 @@ RSpec.describe 'Day routes' do
 
       patch '/api/today', params: my_params, headers: { Authorization: "Bearer #{token}" }
 
+      expect(response.status).to eq(400)
       expect(JSON.parse(response.body)['day']).not_to be_present
       expect(JSON.parse(response.body)['errors']).to be_present
-      expect(JSON.parse(response.body)['errors']).to include('Invalid types')
+      expect(JSON.parse(response.body)['errors']).to include('Reviewed is not a number')
+      expect(JSON.parse(response.body)['errors']).to include('Learned is not a number')
     end
   end
 

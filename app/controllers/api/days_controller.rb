@@ -13,14 +13,10 @@ module Api
     def update_today
       @today = Day.today(@user)
 
-      unless Day.update_data_types_valid?(day_params)
-        return render 'api/shared/errors', locals: { errors: 'Invalid types' }, status: :unprocessable_entity
-      end
-
       if @today.update(day_params)
         render :today
       else
-        render 'api/shared/errors', locals: { errors: 'Update failed' }, status: :bad_request
+        render 'api/shared/errors', locals: { errors: @today.errors.full_messages }, status: :bad_request
       end
     end
 
