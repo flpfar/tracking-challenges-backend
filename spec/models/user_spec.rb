@@ -43,4 +43,22 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  context 'daily_goal' do
+    it 'must be greater than 0' do
+      user = User.new(name: 'User', email: 'user@mail.com', password: '123123', daily_goal: 0)
+
+      user.valid?
+
+      expect(user.errors[:daily_goal]).to include('must be greater than 0')
+    end
+
+    it 'must be an integer' do
+      user = User.new(name: 'User', email: 'user@mail.com', password: '123123', daily_goal: 'oi')
+
+      user.valid?
+
+      expect(user.errors[:daily_goal]).to include('is not a number')
+    end
+  end
 end

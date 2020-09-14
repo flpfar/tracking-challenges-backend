@@ -1,6 +1,6 @@
 module Api
   class UsersController < ApplicationController
-    before_action :authorized, only: [:auto_login]
+    before_action :authorized, only: [:auto_login, :update_daily_goal]
 
     def signup
       @user = User.create(user_params)
@@ -27,10 +27,22 @@ module Api
       render partial: 'user', locals: { user: @user }
     end
 
+    def update_daily_goal
+      if @user.update(daily_goal_params)
+        render partial: 'user', locals: { user: @user }
+      else
+        render 'api/shared/errors', locals: { errors: @user.errors.full_messages }, status: :unauthorized
+      end
+    end
+
     private
 
     def user_params
       params.require(:user).permit(:name, :email, :password)
+    end
+
+    def daily_goal_params
+      params.permit(:daily_goal)
     end
   end
 end

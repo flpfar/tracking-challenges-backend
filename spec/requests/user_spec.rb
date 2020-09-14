@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe 'User' do
-  context 'POST /signup' do
+RSpec.describe 'User routes' do
+  describe 'POST /signup' do
     it 'returns user and token' do
       user = { name: 'User', email: 'user@user.com', password: '123123' }
 
@@ -37,7 +37,7 @@ RSpec.describe 'User' do
     end
   end
 
-  context 'POST /login' do
+  describe 'POST /login' do
     it 'returns user and token' do
       User.create!(name: 'User', email: 'user@user.com', password: '123123')
       user = { email: 'user@user.com', password: '123123' }
@@ -73,7 +73,7 @@ RSpec.describe 'User' do
     end
   end
 
-  context 'GET /auto_login' do
+  describe 'GET /auto_login' do
     it 'returns user and token' do
       user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       token = token_generator(user.id)
@@ -106,6 +106,44 @@ RSpec.describe 'User' do
       expect(JSON.parse(response.body)['token']).not_to be_present
       expect(response.status).to eq(401)
       expect(JSON.parse(response.body)['errors']).to include('Please log in')
+    end
+  end
+
+  describe 'PATCH /daily_goal' do
+    it 'user must be authorized' do
+      user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
+      token = expired_token_generator(user.id)
+
+      patch '/api/daily_goal', params: { daily_goal: 6 }, headers: { Authorization: "Bearer #{token}" }
+
+      expect(JSON.parse(response.body)['day']).not_to be_present
+      expect(JSON.parse(response.body)['errors']).to be_present
+      expect(JSON.parse(response.body)['errors']).to include('Please log in')
+    end
+
+    it 'updates the daily_goal and returns the user' do
+      user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
+      token = token_generator(user.id)
+
+      patch '/api/daily_goal', params: { daily_goal: 6 }, headers: { Authorization: "Bearer #{token}" }
+
+      expect(JSON.parse(response.body)['user']).to be_present
+      expect(JSON.parse(response.body)['user']['name']).to eq('User')
+      expect(JSON.parse(response.body)['user']['email']).to eq('user@user.com')
+      expect(JSON.parse(response.body)['user']['daily_goal']).to eq(6)
+      expect(JSON.parse(response.body)['user']['password']).to be_nil
+      expect(JSON.parse(response.body)['token']).not_to be_present
+    end
+
+    it 'returns errors if update fails' do
+      user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
+      token = token_generator(user.id)
+
+      patch '/api/daily_goal', params: { daily_goal: 'abc' }, headers: { Authorization: "Bearer #{token}" }
+
+      expect(JSON.parse(response.body)['user']).not_to be_present
+      expect(JSON.parse(response.body)['errors']).to be_present
+      expect(JSON.parse(response.body)['errors']).to include('Daily goal is not a number')
     end
   end
 end
