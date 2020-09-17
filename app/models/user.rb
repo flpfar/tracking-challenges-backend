@@ -5,4 +5,8 @@ class User < ApplicationRecord
   validates :name, :email, :password_digest, presence: true
   validates :email, uniqueness: true
   validates :daily_goal, numericality: { greater_than: 0, only_integer: true }
+
+  def working_days
+    days.where('reviewed > 0 OR learned > 0')
+  end
 end

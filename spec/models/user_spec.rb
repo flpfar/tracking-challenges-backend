@@ -44,7 +44,7 @@ RSpec.describe User, type: :model do
     end
   end
 
-  context 'daily_goal' do
+  context 'daily_goal validations' do
     it 'must be greater than 0' do
       user = User.new(name: 'User', email: 'user@mail.com', password: '123123', daily_goal: 0)
 
@@ -60,5 +60,17 @@ RSpec.describe User, type: :model do
 
       expect(user.errors[:daily_goal]).to include('is not a number')
     end
+  end
+
+  it 'woking days returns the days with reviews and learned != 0' do
+    user = User.create!(name: 'User', email: 'user@mail.com', password: '123123', daily_goal: 1)
+    Day.create!(date: Date.current, reviewed: 6, learned: 1, user: user)
+    Day.create!(date: Date.current - 1, reviewed: 4, learned: 2, user: user)
+    Day.create!(date: Date.current - 2, reviewed: 6, learned: 1, user: user)
+    Day.create!(date: Date.current - 3, reviewed: 1, learned: 0, user: user)
+    Day.create!(date: Date.current - 4, reviewed: 0, learned: 0, user: user)
+    Day.create!(date: Date.current - 5, reviewed: 0, learned: 0, user: user)
+
+    expect(user.working_days.count).to eq(4)
   end
 end
