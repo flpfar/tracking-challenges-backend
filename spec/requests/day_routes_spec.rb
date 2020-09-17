@@ -55,7 +55,7 @@ RSpec.describe 'Day routes' do
       expect(JSON.parse(response.body)['errors']).to include('Please log in')
     end
 
-    it 'updates today data and returns the day object' do
+    it 'updates today data and returns the day and updated user object' do
       user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       token = token_generator(user.id)
       Day.create!(date: Date.current, reviewed: 4, learned: 2, user: user)
@@ -66,6 +66,9 @@ RSpec.describe 'Day routes' do
       expect(JSON.parse(response.body)['day']['date']).to eq(Date.current.to_s)
       expect(JSON.parse(response.body)['day']['reviewed']).to eq(5)
       expect(JSON.parse(response.body)['day']['learned']).to eq(2)
+      expect(JSON.parse(response.body)['user']).to be_present
+      expect(JSON.parse(response.body)['user']['total_challenges']).to eq(7)
+      expect(JSON.parse(response.body)['user']['total_working_days']).to eq(1)
     end
 
     it 'returns errors when fails to update' do
