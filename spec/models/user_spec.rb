@@ -73,4 +73,16 @@ RSpec.describe User, type: :model do
 
     expect(user.working_days.count).to eq(4)
   end
+
+  it 'total challenges returns the number of challenges solved so far' do
+    user = User.create!(name: 'User', email: 'user@mail.com', password: '123123', daily_goal: 1)
+    Day.create!(date: Date.current, reviewed: 6, learned: 1, user: user)
+    Day.create!(date: Date.current - 1, reviewed: 4, learned: 2, user: user)
+    Day.create!(date: Date.current - 2, reviewed: 6, learned: 1, user: user)
+    Day.create!(date: Date.current - 3, reviewed: 1, learned: 0, user: user)
+    Day.create!(date: Date.current - 4, reviewed: 0, learned: 0, user: user)
+    Day.create!(date: Date.current - 5, reviewed: 0, learned: 0, user: user)
+
+    expect(user.total_challenges).to eq(21)
+  end
 end

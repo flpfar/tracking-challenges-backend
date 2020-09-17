@@ -9,4 +9,8 @@ class User < ApplicationRecord
   def working_days
     days.where('reviewed > 0 OR learned > 0')
   end
+
+  def total_challenges
+    working_days.sum('reviewed + learned')
+  end
 end

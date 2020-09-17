@@ -3,4 +3,5 @@ json.user do
   json.email user.email
   json.daily_goal user.daily_goal
   json.total_working_days user.working_days.count
+  json.total_challenges user.total_challenges
 end
