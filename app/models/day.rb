@@ -3,6 +3,7 @@ class Day < ApplicationRecord
 
   validates :date, presence: true, uniqueness: { scope: :user }
   validates :reviewed, :learned, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+  scope :working_days, -> { where('reviewed > 0 OR learned > 0') }
 
   def self.today(user)
     today = find_by(date: Date.current, user: user)

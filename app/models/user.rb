@@ -7,7 +7,7 @@ class User < ApplicationRecord
   validates :daily_goal, numericality: { greater_than: 0, only_integer: true }
 
   def working_days
-    days.where('reviewed > 0 OR learned > 0')
+    days.working_days
   end
 
   def total_challenges

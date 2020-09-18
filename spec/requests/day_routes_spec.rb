@@ -101,12 +101,13 @@ RSpec.describe 'Day routes' do
       expect(JSON.parse(response.body)['errors']).to include('Please log in')
     end
 
-    it 'returns a sorted array with all days from user' do
+    it 'returns a sorted array with all worked days from user' do
       user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       token = token_generator(user.id)
       Day.create!(date: Date.yesterday, reviewed: 4, learned: 2, user: user)
       Day.create!(date: Date.current, reviewed: 6, learned: 1, user: user)
-      Day.create!(date: Date.current - 4, reviewed: 6, learned: 1, user: user)
+      Day.create!(date: Date.current - 4, reviewed: 6, learned: 0, user: user)
+      Day.create!(date: Date.current - 6, reviewed: 0, learned: 0, user: user)
 
       get '/api/days', headers: { Authorization: "Bearer #{token}" }
 

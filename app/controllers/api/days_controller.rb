@@ -3,7 +3,7 @@ module Api
     before_action :authorized, only: %i[index today update_today]
 
     def index
-      @days = @user.days.order(date: :desc)
+      @days = @user.days.working_days.order(date: :desc)
     end
 
     def today
