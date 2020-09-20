@@ -1,6 +1,6 @@
 module Api
   class UsersController < ApplicationController
-    before_action :authorized, only: [:auto_login, :update_daily_goal]
+    before_action :authorized, only: %i[auto_login update_daily_goal]
 
     def signup
       @user = User.create(user_params)
