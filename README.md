@@ -1,4 +1,4 @@
-# Companies Marketplace
+# Tracking Challenges API
 
 > Rails backend for tracking coding challenges app.
 
