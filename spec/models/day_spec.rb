@@ -55,7 +55,11 @@ RSpec.describe Day, type: :model do
 
   it '.today returns the current day ' do
     user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
-    Day.create!(user: user, date: Date.current, reviewed: 2, learned: 3)
+    day = Day.create!(user: user, date: Date.current)
+    reviewed = Measure.create(name: 'Reviewed')
+    learned = Measure.create(name: 'Learned')
+    Measurement.create!(day: day, measure: reviewed, amount: 2)
+    Measurement.create!(day: day, measure: learned, amount: 3)
 
     today = Day.today(user)
 
