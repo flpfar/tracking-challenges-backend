@@ -1,46 +1,58 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  context 'validations' do
+  describe 'validations' do
     it 'is valid with valid attributes' do
       user = User.new(name: 'User', email: 'user@mail.com', password: '123123')
 
       expect(user).to be_valid
     end
 
-    context 'is not valid' do
-      it 'without a name' do
-        user = User.new(email: 'user@mail.com', password: '123123')
+    it 'without a name' do
+      user = User.new(email: 'user@mail.com', password: '123123')
 
-        user.valid?
+      user.valid?
 
-        expect(user.errors[:name]).to include("can't be blank")
-      end
+      expect(user.errors[:name]).to include("can't be blank")
+    end
 
-      it 'without an email' do
-        user = User.new(name: 'User', password: '123123')
+    it 'without an email' do
+      user = User.new(name: 'User', password: '123123')
 
-        user.valid?
+      user.valid?
 
-        expect(user.errors[:email]).to include("can't be blank")
-      end
+      expect(user.errors[:email]).to include("can't be blank")
+    end
 
-      it 'without an unique email' do
-        User.create!(name: 'User', email: 'user@mail.com', password: '123123')
-        new_user = User.new(name: 'New User', email: 'user@mail.com', password: '123123')
+    it 'without an unique email' do
+      User.create!(name: 'User', email: 'user@mail.com', password: '123123')
+      new_user = User.new(name: 'New User', email: 'user@mail.com', password: '123123')
 
-        new_user.valid?
+      new_user.valid?
 
-        expect(new_user.errors[:email]).to include('has already been taken')
-      end
+      expect(new_user.errors[:email]).to include('has already been taken')
+    end
 
-      it 'without a password' do
-        user = User.new(name: 'User', email: 'user@mail.com')
+    it 'with an invalid email' do
+      user1 = User.new(name: 'User', email: 'user.com', password: '123123')
+      user2 = User.new(name: 'User', email: 'user', password: '123123')
+      user3 = User.new(name: 'User', email: 'user@.', password: '123123')
+      user4 = User.new(name: 'User', email: '@.com', password: '123123')
+      user5 = User.new(name: 'User', email: 'a@com', password: '123123')
 
-        user.valid?
+      expect(user1).not_to be_valid
+      expect(user2).not_to be_valid
+      expect(user3).not_to be_valid
+      expect(user4).not_to be_valid
+      expect(user5).not_to be_valid
+    end
 
-        expect(user.errors[:password]).to include("can't be blank")
-      end
+    it 'without a password' do
+      user = User.new(name: 'User', email: 'user@mail.com')
+
+      user.valid?
+
+      expect(user.errors[:password]).to include("can't be blank")
     end
   end
 
