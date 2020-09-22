@@ -204,11 +204,10 @@ This project provides an api for a tracking app based on the number of coding ch
 In terminal:
 - Clone this repository: `$ git clone https://github.com/flpfar/tracking-challenges-backend.git `
 - Navigate to the project folder: `$ cd tracking-challenges-backend `
-- Run the following commands:
+- Run `$ bin/setup`, which will build the project and prepare the database.
+- This app is using secret credentials to encrypt data using JWT. In order to work properly, run the following command to rebuild the app credentials:
 ```
-$ bundle install
-$ rails db:create
-$ rails db:migrate
+EDITOR="mate --wait" bin/rails credentials:edit
 ```
 
 **Sample data**
