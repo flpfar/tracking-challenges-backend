@@ -7,12 +7,28 @@ class Day < ApplicationRecord
   # scope :working_days, -> { where('reviewed > 0 OR learned > 0') }
 
   def reviewed
-    revieweds = measurements.includes(:measure).where('measures.name = ?', 'Reviewed').references(:measures)
+    revieweds = measurements.reviewed
+    return revieweds.first if revieweds.present?
+
+    reviewed_measure = Measure.find_by(name: 'Reviewed')
+    measurements.create(measure: reviewed_measure)
+  end
+
+  def reviewed_count
+    revieweds = measurements.reviewed
     revieweds.present? ? revieweds.first.amount : 0
   end
 
   def learned
-    learneds = measurements.includes(:measure).where('measures.name = ?', 'Learned').references(:measures)
+    learneds = measurements.learned
+    return learneds.first if learneds.present?
+
+    learned_measure = Measure.find_by(name: 'Learned')
+    measurements.create(measure: learned_measure)
+  end
+
+  def learned_count
+    learneds = measurements.learned
     learneds.present? ? learneds.first.amount : 0
   end
 

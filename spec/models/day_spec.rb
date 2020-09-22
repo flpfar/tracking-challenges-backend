@@ -39,9 +39,9 @@ RSpec.describe Day, type: :model do
   it 'has default 0 for reviewed and learned' do
     user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
     day = Day.create!(user: user, date: Date.current)
-
-    expect(day.reviewed).to eq(0)
-    expect(day.learned).to eq(0)
+    
+    expect(day.reviewed_count).to eq(0)
+    expect(day.learned_count).to eq(0)
   end
 
   it 'must be destroyed on user deletion' do
@@ -64,8 +64,8 @@ RSpec.describe Day, type: :model do
     today = Day.today(user)
 
     expect(today.date).to eq(Date.current)
-    expect(today.reviewed).to eq(2)
-    expect(today.learned).to eq(3)
+    expect(today.reviewed_count).to eq(2)
+    expect(today.learned_count).to eq(3)
   end
 
   it '.today creates and returns a new day if it doesnt exist' do
@@ -74,8 +74,8 @@ RSpec.describe Day, type: :model do
     today = Day.today(user)
 
     expect(today.date).to eq(Date.current)
-    expect(today.reviewed).to eq(0)
-    expect(today.learned).to eq(0)
+    expect(today.reviewed_count).to eq(0)
+    expect(today.learned_count).to eq(0)
     expect(today.user).to eq(user)
   end
 end

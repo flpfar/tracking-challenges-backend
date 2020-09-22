@@ -1,1 +1,1 @@
-json.days @days, :date, :reviewed, :learned
+json.days @days

@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2020_09_22_161602) do
   create_table "measurements", force: :cascade do |t|
     t.bigint "measure_id", null: false
     t.bigint "day_id", null: false
-    t.integer "amount"
+    t.integer "amount", default: 0, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["day_id"], name: "index_measurements_on_day_id"

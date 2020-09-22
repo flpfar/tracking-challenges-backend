@@ -3,7 +3,11 @@ module Api
     before_action :authorized, only: %i[index today update_today]
 
     def index
-      @days = @user.days.working_days.order(date: :desc)
+      @days = @user.working_days
+      @days.each do |item|
+        item[:reviewed] ||= 0
+        item[:learned] ||= 0
+      end
     end
 
     def today
@@ -13,11 +17,10 @@ module Api
     def update_today
       @today = Day.today(@user)
 
-      if @today.update(day_params)
-        render :today
-      else
-        render 'api/shared/errors', locals: { errors: @today.errors.full_messages }, status: :bad_request
-      end
+      @today.reviewed.update(amount: params[:reviewed]) if params[:reviewed]
+      @today.learned.update(amount: params[:learned]) if params[:learned]
+
+      render :today
     end
 
     private

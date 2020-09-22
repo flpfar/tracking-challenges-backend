@@ -5,7 +5,11 @@ RSpec.describe 'Day routes' do
     it 'user must be authorized' do
       user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       token = expired_token_generator(user.id)
-      Day.create!(date: Date.current, reviewed: 4, learned: 2, user: user)
+      day = Day.create!(user: user, date: Date.current)
+      reviewed = Measure.create!(name: 'Reviewed')
+      learned = Measure.create!(name: 'Learned')
+      Measurement.create!(day: day, measure: reviewed, amount: 4)
+      Measurement.create!(day: day, measure: learned, amount: 2)
 
       get '/api/today', headers: { Authorization: "Bearer #{token}" }
 
@@ -17,7 +21,11 @@ RSpec.describe 'Day routes' do
     it "returns data of user's current day" do
       user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       token = token_generator(user.id)
-      Day.create!(date: Date.current, reviewed: 4, learned: 2, user: user)
+      day = Day.create!(user: user, date: Date.current)
+      reviewed = Measure.create!(name: 'Reviewed')
+      learned = Measure.create!(name: 'Learned')
+      Measurement.create!(day: day, measure: reviewed, amount: 4)
+      Measurement.create!(day: day, measure: learned, amount: 2)
 
       get '/api/today', headers: { Authorization: "Bearer #{token}" }
 
@@ -46,7 +54,11 @@ RSpec.describe 'Day routes' do
     it 'user must be authorized' do
       user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       token = expired_token_generator(user.id)
-      Day.create!(date: Date.current, reviewed: 4, learned: 2, user: user)
+      day = Day.create!(user: user, date: Date.current)
+      reviewed = Measure.create!(name: 'Reviewed')
+      learned = Measure.create!(name: 'Learned')
+      Measurement.create!(day: day, measure: reviewed, amount: 4)
+      Measurement.create!(day: day, measure: learned, amount: 2)
 
       patch '/api/today', params: { reviewed: 5 }, headers: { Authorization: "Bearer #{token}" }
 
@@ -58,7 +70,11 @@ RSpec.describe 'Day routes' do
     it 'updates today data and returns the day and updated user object' do
       user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       token = token_generator(user.id)
-      Day.create!(date: Date.current, reviewed: 4, learned: 2, user: user)
+      day = Day.create!(user: user, date: Date.current)
+      reviewed = Measure.create!(name: 'Reviewed')
+      learned = Measure.create!(name: 'Learned')
+      Measurement.create!(day: day, measure: reviewed, amount: 4)
+      Measurement.create!(day: day, measure: learned, amount: 2)
 
       patch '/api/today', params: { reviewed: 5 }, headers: { Authorization: "Bearer #{token}" }
 
@@ -70,29 +86,17 @@ RSpec.describe 'Day routes' do
       expect(JSON.parse(response.body)['user']['total_challenges']).to eq(7)
       expect(JSON.parse(response.body)['user']['total_working_days']).to eq(1)
     end
-
-    it 'returns errors when fails to update' do
-      user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
-      token = token_generator(user.id)
-      Day.create!(date: Date.current, reviewed: 4, learned: 2, user: user)
-      my_params = { reviewed: 'String', learned: '[2, 6]' }
-
-      patch '/api/today', params: my_params, headers: { Authorization: "Bearer #{token}" }
-
-      expect(response.status).to eq(400)
-      expect(JSON.parse(response.body)['day']).not_to be_present
-      expect(JSON.parse(response.body)['errors']).to be_present
-      expect(JSON.parse(response.body)['errors']).to include('Reviewed is not a number')
-      expect(JSON.parse(response.body)['errors']).to include('Learned is not a number')
-    end
   end
 
   describe 'GET /days' do
     it 'user must be authorized' do
       user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       token = expired_token_generator(user.id)
-      Day.create!(date: Date.current, reviewed: 4, learned: 2, user: user)
-      Day.create!(date: Date.yesterday, reviewed: 6, learned: 1, user: user)
+      day = Day.create!(user: user, date: Date.current)
+      reviewed = Measure.create!(name: 'Reviewed')
+      learned = Measure.create!(name: 'Learned')
+      Measurement.create!(day: day, measure: reviewed, amount: 4)
+      Measurement.create!(day: day, measure: learned, amount: 2)
 
       get '/api/days', headers: { Authorization: "Bearer #{token}" }
 
@@ -104,10 +108,18 @@ RSpec.describe 'Day routes' do
     it 'returns a sorted array with all worked days from user' do
       user = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       token = token_generator(user.id)
-      Day.create!(date: Date.yesterday, reviewed: 4, learned: 2, user: user)
-      Day.create!(date: Date.current, reviewed: 6, learned: 1, user: user)
-      Day.create!(date: Date.current - 4, reviewed: 6, learned: 0, user: user)
-      Day.create!(date: Date.current - 6, reviewed: 0, learned: 0, user: user)
+      reviewed = Measure.create!(name: 'Reviewed')
+      learned = Measure.create!(name: 'Learned')
+      day1 = Day.create!(user: user, date: Date.yesterday)
+      Measurement.create!(day: day1, measure: reviewed, amount: 4)
+      Measurement.create!(day: day1, measure: learned, amount: 2)
+      day2 = Day.create!(user: user, date: Date.current)
+      Measurement.create!(day: day2, measure: reviewed, amount: 6)
+      Measurement.create!(day: day2, measure: learned, amount: 1)
+      day3 = Day.create!(user: user, date: Date.current - 4)
+      Measurement.create!(day: day3, measure: reviewed, amount: 6)
+      Measurement.create!(day: day3, measure: learned, amount: 0)
+      Day.create!(user: user, date: Date.current - 6)
 
       get '/api/days', headers: { Authorization: "Bearer #{token}" }
 
@@ -122,10 +134,17 @@ RSpec.describe 'Day routes' do
     it 'returns only days from user' do
       user1 = User.create!(name: 'User', email: 'user@user.com', password: '123123')
       user2 = User.create!(name: 'User2', email: 'user2@user.com', password: '123123')
+      reviewed = Measure.create!(name: 'Reviewed')
+      learned = Measure.create!(name: 'Learned')
+      day1 = Day.create!(date: Date.current - 2, user: user1)
+      day2 = Day.create!(date: Date.current, user: user1)
+      day3 = Day.create!(date: Date.yesterday, user: user2)
+      Measurement.create!(day: day1, measure: reviewed, amount: 4)
+      Measurement.create!(day: day1, measure: learned, amount: 2)
+      Measurement.create!(day: day2, measure: reviewed, amount: 6)
+      Measurement.create!(day: day3, measure: learned, amount: 1)
+
       token = token_generator(user1.id)
-      Day.create!(date: Date.current - 2, reviewed: 4, learned: 2, user: user1)
-      Day.create!(date: Date.current, reviewed: 6, learned: 1, user: user1)
-      Day.create!(date: Date.yesterday, reviewed: 6, learned: 1, user: user2)
 
       get '/api/days', headers: { Authorization: "Bearer #{token}" }
 
