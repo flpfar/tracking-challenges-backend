@@ -39,7 +39,7 @@ RSpec.describe Day, type: :model do
   it 'has default 0 for reviewed and learned' do
     user = User.create!(name: 'User', email: 'user@mail.com', password: '123123')
     day = Day.create!(user: user, date: Date.current)
-    
+
     expect(day.reviewed_count).to eq(0)
     expect(day.learned_count).to eq(0)
   end

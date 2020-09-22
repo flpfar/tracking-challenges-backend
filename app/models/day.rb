@@ -3,8 +3,6 @@ class Day < ApplicationRecord
   has_many :measurements
 
   validates :date, presence: true, uniqueness: { scope: :user }
-  # validates :reviewed, :learned, numericality: { greater_than_or_equal_to: 0, only_integer: true }
-  # scope :working_days, -> { where('reviewed > 0 OR learned > 0') }
 
   def reviewed
     revieweds = measurements.reviewed
